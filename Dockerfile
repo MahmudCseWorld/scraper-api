@@ -11,9 +11,13 @@ RUN apt-get update &&\
 
 WORKDIR  /app
 
-COPY ./package.json ./
+COPY ./scraper/package.json ./
 RUN  yarn 
 
-COPY ./ ./
+COPY ./scraper ./
 
-CMD ["node", "index.js"]
+# Creating Display
+ENV DISPLAY :99
+
+# Start script on Xvfb
+CMD Xvfb :99 -screen 0 1024x768x16 & yarn start

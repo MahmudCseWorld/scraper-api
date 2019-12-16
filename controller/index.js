@@ -1,16 +1,12 @@
 const axios = require("axios");
-const mongoose = require("mongoose");
-const dataSchema = require("./schema/schema");
 
-mongoose.connect("mongodb://localhost:27017/scraper", {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-});
 const runner = async () => {
-  const res = await axios.get("http://localhost:5000/api/scraper");
-  const result = new dataSchema(res.data);
-  const response = result.save();
-  return response;
+  try {
+    const res = await axios.get("http://localhost:5000/api/scraper");
+    return res.data;
+  } catch (error) {
+    console.log({ error });
+  }
 };
 
 runner().then(console.log);

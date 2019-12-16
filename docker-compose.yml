@@ -1,12 +1,20 @@
-version: '3'
-
-services: 
-    scraper-api: 
-         build:  
-            dockerfile:  Dockerfile
-            context: ./scraper
-         volumes: 
-             -  /app/node_modules
-             - ./scraper:/app
-         ports: 
-            - 5000:5000
+version: "3"
+services:
+  scraper-api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - /app/node_modules
+      - ./scraper:/app
+    ports:
+      - 5000:5000
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./persistance/mongo:/data
+    ports:
+      - 27017:27017

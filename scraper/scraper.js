@@ -4,23 +4,29 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
 const scraper = async () => {
+  console.log("Opening browser");
   const browser = await puppeteer.launch({
-    // will greatly affect the results
-    headless: true,
+    headless: false,
     // important for running on various server where root user is present
     args: ["--no-sandbox", "--disable-setuid-sandbox"]
   });
-  const page = await browser.newPage();
-  await page.goto("https://example.com");
+  try {
+    const page = await browser.newPage();
+    console.log("Navigating");
+    await page.goto("https://example.com");
 
-  const result = await page.evaluate(() => {
-    return {
-      header: document.querySelector("h1").innerText,
-      title: document.querySelector("div p").innerText
-    };
-  });
+    const result = await page.evaluate(() => {
+      return {
+        header: document.querySelector("h1").innerText,
+        title: document.querySelector("div p").innerText
+      };
+    });
+    console.log("Closing browser");
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
   await browser.close();
-  return result;
 };
 
 module.exports = scraper;

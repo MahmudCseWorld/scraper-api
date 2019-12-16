@@ -1,0 +1,10 @@
+node_modules/*
+
+persistance
+
+dist
+.cache
+node_modules
+build
+
+.jscpd
