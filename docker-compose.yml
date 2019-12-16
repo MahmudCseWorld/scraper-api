@@ -1,6 +1,11 @@
 version: "3"
 services:
   scraper-api:
+    environment:
+      - DISPLAY=:99
+    command: >
+      sh -c "Xvfb :99 -screen 0 1024x768x16 &
+            yarn run start"
     build:
       dockerfile: Dockerfile
       context: .
