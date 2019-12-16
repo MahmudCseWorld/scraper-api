@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-  const blogSchema = new Schema({
-    header: String, 
-    title: String
-  });
+const blogSchema = new Schema({
+  header: String,
+  title: String
+});
 
-
-module.exports = mongoose.model('scrapData', blogSchema); 
+module.exports = mongoose.model("scrapData", blogSchema);

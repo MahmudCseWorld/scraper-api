@@ -1,18 +1,16 @@
-const axios = require('axios'); 
-const mongoose = require('mongoose');
-const dataSchema = require('./schema/schema')
+const axios = require("axios");
+const mongoose = require("mongoose");
+const dataSchema = require("./schema/schema");
 
-
-mongoose.connect('mongodb://localhost:27017/scraper', {
+mongoose.connect("mongodb://localhost:27017/scraper", {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
-const runner = async() => {
-  const res = await axios.get('http://localhost:5000/api/scraper'); 
-  console.log(res.data); 
-  const result = new dataSchema(res.data); 
-  
-  const response = result.save();  
-}
+const runner = async () => {
+  const res = await axios.get("http://localhost:5000/api/scraper");
+  const result = new dataSchema(res.data);
+  const response = result.save();
+  return response;
+};
 
-runner(); 
+runner().then(console.log);
