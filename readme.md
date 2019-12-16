@@ -1,12 +1,9 @@
-# Run Scrapper and mongodb
+### Scraper on Docker 
 
   `docker-compose  up --build`
 
-# For controller 
+### run controller 
 
-   ## Follow this steps 
-
-
-     - cd to controller 
-     - yarn 
-     - node index.js
+    - cd to controller 
+    - yarn 
+    - node index.js
