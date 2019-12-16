@@ -12,8 +12,7 @@ const runner = async() => {
   console.log(res.data); 
   const result = new dataSchema(res.data); 
   
-  const response = result.save(); 
-  console.log(response); 
+  const response = result.save();  
 }
 
 runner(); 
