@@ -1,12 +1,18 @@
 const express = require("express");
 const cors = require("cors");
-const scraper = require("./scraper");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
-const Data = require("./schema/data");
+const runner = require("./controller/runner");
 const { MONGO_URL, AUTHORIZATION, PORT } = process.env;
 
 const app = express();
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
 app.use(cors());
 
 mongoose.connect(
@@ -24,7 +30,7 @@ mongoose.connect(
   }
 );
 
-app.get("/api/scraper", async (req, res) => {
+app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization) {
     return res
       .status(403)
@@ -33,10 +39,9 @@ app.get("/api/scraper", async (req, res) => {
   if (!req.headers.authorization === AUTHORIZATION) {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
-  const data = await scraper();
-  const result = new Data(data);
-  const response = await result.save();
-  return res.json(response);
+  const { site, urls, start, end } = req.body;
+  const data = await runner({ site, urls, start, end });
+  return res.json(data);
 });
 
 app.listen(PORT, () => {

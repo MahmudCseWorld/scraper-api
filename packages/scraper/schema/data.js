@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const blogSchema = new Schema({
-  header: String,
-  title: String
+const DataSchema = new Schema({
+  site: String,
+  url: String,
+  roomId: String,
+  headline: String,
+  total_review: String,
+  last_review_date: String,
+  description: String
 });
 
-module.exports = mongoose.model("scrapData", blogSchema);
+module.exports = mongoose.model("data", DataSchema);
