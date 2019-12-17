@@ -1,10 +1,10 @@
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
 const runner = require("./controller/runner");
 const { MONGO_URL, AUTHORIZATION, PORT } = process.env;
+const DataSchema = require("./schema/data");
 
 const app = express();
 
@@ -12,8 +12,6 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
-
-app.use(cors());
 
 mongoose.connect(
   MONGO_URL,
@@ -40,8 +38,13 @@ app.post("/api/scraper", async (req, res) => {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
   const { site, urls, start, end } = req.body;
-  const data = await runner({ site, urls, start, end });
-  return res.json(data);
+  await runner({ site, urls, start, end });
+  const totalResult = await DataSchema.find({});
+  return res.json({
+    success: true,
+    message: "Urls are scraped",
+    total_scraped: totalResult.length
+  });
 });
 
 app.listen(PORT, () => {
