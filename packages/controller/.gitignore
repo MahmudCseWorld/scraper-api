@@ -1,4 +1,4 @@
 node_modules
 *.log
-urls.json
+urls*.json
 proxies.json
