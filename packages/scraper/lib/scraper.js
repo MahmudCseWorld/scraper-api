@@ -11,10 +11,10 @@ const scraper = async ({ page, url, selectors }) => {
       const description = document.querySelector(selectors.description);
 
       return {
-        headline: headline && headline.innerText,
-        total_review: total_review && total_review.innerText.split(" ")[0],
-        last_review_date: last_review_date && last_review_date.innerText,
-        description: description && description.innerText
+        headline: headline.innerText,
+        total_review: total_review.innerText.split(" ")[0],
+        last_review_date: last_review_date.innerText,
+        description: description.innerText
       };
     }, selectors);
   } catch (error) {

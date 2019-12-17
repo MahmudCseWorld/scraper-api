@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const runner = require("./controller/runner");
 const { MONGO_URL, AUTHORIZATION, PORT } = process.env;
 const DataSchema = require("./schema/data");
+const ErrorSchema = require("./schema/error");
 
 const app = express();
 
@@ -40,10 +41,12 @@ app.post("/api/scraper", async (req, res) => {
   const { site, urls, start, end } = req.body;
   await runner({ site, urls, start, end });
   const totalResult = await DataSchema.find({});
+  const puppeteer_errors = await ErrorSchema.find({});
   return res.json({
     success: true,
     message: "Urls are scraped",
-    total_scraped: totalResult.length
+    total: totalResult.length,
+    puppeteer_errors: puppeteer_errors.length
   });
 });
 

@@ -1,7 +1,9 @@
 const puppeteer = require("puppeteer-extra");
 const mongoose = require("mongoose");
+
 const scraper = require("../lib/scraper");
 const DataSchema = require("../schema/data");
+const ErrorSchema = require("../schema/error");
 
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
@@ -30,13 +32,15 @@ const runner = async ({ site, urls, start, end }) => {
           url,
           selectors
         });
-        const newData = new DataSchema({ ...data, site, roomId });
+        const newData = new DataSchema({ ...data, site, roomId, url });
         result = await newData.save();
       } else {
         console.log(`${roomId} is already scraped`);
       }
     } catch (error) {
-      console.log(`Error found on id: ${roomId}. Saved on /data/errors.json`);
+      const newError = new ErrorSchema({ site, roomId, url, message: error.message });
+      await newError.save();
+      console.log(`Error found on id: ${roomId}`);
     }
   }
   console.log("Closing browser");
