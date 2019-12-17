@@ -1,9 +1,10 @@
-# run scraper 
+# Run scraper in docker 
    - `docker-compose  up --build` 
 
-# now run controller 
-   Follow this stpes 
- - cd to controller
- - yarn 
- - node index.js
+# Run controller 
+ ```bash
+ $ cd controller
+ $ yarn or npm install
+ $ yarn start or npm start
+ ```
 
