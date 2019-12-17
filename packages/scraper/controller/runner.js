@@ -2,6 +2,8 @@ const puppeteer = require("puppeteer-extra");
 const mongoose = require("mongoose");
 
 const scraper = require("../lib/scraper");
+const getProxy = require("../lib/random-proxy");
+
 const DataSchema = require("../schema/data");
 const ErrorSchema = require("../schema/error");
 
@@ -17,7 +19,15 @@ const runner = async ({ site, urls, start, end }) => {
   const selectors = require(`./selectors/${site}.json`);
 
   console.log("Opening browser");
-  const browser = await puppeteer.launch({ headless: false, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
+  const proxy = await getProxy();
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      `--proxy-server=${proxy}`
+    ]
+  });
   const page = await browser.newPage();
 
   for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
@@ -38,7 +48,12 @@ const runner = async ({ site, urls, start, end }) => {
         console.log(`${roomId} is already scraped`);
       }
     } catch (error) {
-      const newError = new ErrorSchema({ site, roomId, url, message: error.message });
+      const newError = new ErrorSchema({
+        site,
+        roomId,
+        url,
+        message: error.message
+      });
       await newError.save();
       console.log(`Error found on id: ${roomId}`);
     }
