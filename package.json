@@ -1,0 +1,14 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "start:controller": "lerna exec --stream --scope=controller -- yarn start",
+    "start:scraper": "lerna exec --stream --scope=scraper -- yarn start"
+  },
+  "devDependencies": {
+    "lerna": "^3.13.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

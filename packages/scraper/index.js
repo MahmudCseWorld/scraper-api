@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const scraper = require("./scraper");
@@ -24,6 +23,14 @@ mongoose.connect(
 );
 
 app.get("/api/scraper", async (req, res) => {
+  if (!req.headers.authorization) {
+    return res
+      .status(403)
+      .json({ message: "No authorization header provided" });
+  }
+  if (!req.headers.authorization === process.env.AUTHORIZATION) {
+    return res.status(403).json({ message: "Invalid Authorization" });
+  }
   const data = await scraper();
   const result = new Data(data);
   const response = await result.save();

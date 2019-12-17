@@ -1,15 +1,17 @@
-version: "3"
+version: "3.7"
 services:
   baseImage:
-    build: .
     image: base
+    env_file: ${ENV_FILE}
+    build: .
   scraper-api:
     image: base
+    env_file: ${ENV_FILE}
     environment:
       - DISPLAY=:99
     command: >
       sh -c "Xvfb :99 -screen 0 1024x768x16 &
-            yarn run start"
+            yarn run start:scraper"
     ports:
       - 5000:5000
     links:
