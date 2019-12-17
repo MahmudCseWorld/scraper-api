@@ -38,8 +38,8 @@ app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization === AUTHORIZATION) {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
-  const { site, urls, start, end } = req.body;
-  await runner({ site, urls, start, end });
+  const { site, urls, start, end, proxies } = req.body;
+  await runner({ site, urls, start, end, proxies });
   const totalResult = await DataSchema.find({});
   const puppeteer_errors = await ErrorSchema.find({});
   return res.json({
