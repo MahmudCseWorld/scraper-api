@@ -50,6 +50,8 @@ app.post("/api/scraper", async (req, res) => {
   });
 });
 
+app.get("/api/scraper", (req, res) => res.json({ message: "Hello" }));
+
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });
