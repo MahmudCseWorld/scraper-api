@@ -17,7 +17,7 @@ const runner = async ({ site, urls, start, end }) => {
   const selectors = require(`./selectors/${site}.json`);
 
   console.log("Opening browser");
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: false, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
   const page = await browser.newPage();
 
   for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {

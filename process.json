@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "scraper",
+      "cwd": "./packages/scraper",
+      "script": "index.js",
+      "args": "yarn start"
+    }
+  ]
+}
