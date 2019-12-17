@@ -12,7 +12,7 @@ const app = express();
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 
 mongoose.connect(
   MONGO_URL,
