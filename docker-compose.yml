@@ -1,17 +1,15 @@
 version: "3"
 services:
+  baseImage:
+    build: .
+    image: base
   scraper-api:
+    image: base
     environment:
       - DISPLAY=:99
     command: >
       sh -c "Xvfb :99 -screen 0 1024x768x16 &
             yarn run start"
-    build:
-      dockerfile: Dockerfile
-      context: .
-    volumes:
-      - /app/node_modules
-      - ./scraper:/app
     ports:
       - 5000:5000
     links:
