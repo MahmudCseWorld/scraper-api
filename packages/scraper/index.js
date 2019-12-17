@@ -4,11 +4,13 @@ const scraper = require("./scraper");
 const mongoose = require("mongoose");
 
 const Data = require("./schema/data");
+const { MONGO_URL, AUTHORIZATION, PORT } = process.env;
 
 const app = express();
 app.use(cors());
+
 mongoose.connect(
-  "mongodb://mongo:27017/scraper_api",
+  MONGO_URL,
   {
     useUnifiedTopology: true,
     useNewUrlParser: true
@@ -28,7 +30,7 @@ app.get("/api/scraper", async (req, res) => {
       .status(403)
       .json({ message: "No authorization header provided" });
   }
-  if (!req.headers.authorization === process.env.AUTHORIZATION) {
+  if (!req.headers.authorization === AUTHORIZATION) {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
   const data = await scraper();
@@ -37,6 +39,6 @@ app.get("/api/scraper", async (req, res) => {
   return res.json(response);
 });
 
-app.listen(5000, () => {
-  console.log("server is running on port 5000");
+app.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
 });

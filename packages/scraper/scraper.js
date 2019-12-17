@@ -1,10 +1,11 @@
-const puppeteer = require('puppeteer-extra');
+const puppeteer = require("puppeteer-extra");
 // add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
 const scraper = async () => {
   console.log("Opening browser");
+  let result;
   const browser = await puppeteer.launch({
     headless: false,
     // important for running on various server where root user is present
@@ -15,18 +16,18 @@ const scraper = async () => {
     console.log("Navigating");
     await page.goto("https://example.com");
 
-    const result = await page.evaluate(() => {
+    result = await page.evaluate(() => {
       return {
         header: document.querySelector("h1").innerText,
         title: document.querySelector("div p").innerText
       };
     });
-    console.log("Closing browser");
-    return result;
   } catch (error) {
     console.log(error);
   }
+  console.log("Closing browser");
   await browser.close();
+  return result;
 };
 
 module.exports = scraper;

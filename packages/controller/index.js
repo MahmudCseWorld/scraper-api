@@ -1,9 +1,11 @@
 const axios = require("axios");
 
+const { API_URL, AUTHORIZATION } = process.env;
+
 const runner = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/scraper", {
-      headers: { authorization: process.env.AUTHORIZATION }
+    const res = await axios.get(API_URL, {
+      headers: { authorization: AUTHORIZATION }
     });
     return res.data;
   } catch (error) {
