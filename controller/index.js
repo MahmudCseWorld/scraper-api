@@ -41,10 +41,9 @@ const runner = async () => {
   // Set index
   const startIndex = start - 1 || 0;
   const endIndex = end || urls.length;
-
   for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
     const roomId = url.split('/').slice(-1)[0];
-    debug(`${i + 1} out of ${urls.length}: ${roomId}`);
+    debug(`${i + 1} out of ${endIndex}: ${roomId}`);
 
     const alreadyScraped = await DataSchema.findOne({ roomId });
     if (!alreadyScraped) {
