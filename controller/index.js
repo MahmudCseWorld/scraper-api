@@ -31,7 +31,8 @@ const runner = async () => {
     debug(`${i + 1} out of ${endIndex - startIndex}: ${roomId}`);
 
     const alreadyScraped = await DataSchema.findOne({ roomId });
-    if (!alreadyScraped) {
+    const existOnError = await ErrorSchema.findOne({ roomId });
+    if (!alreadyScraped && !existOnError) {
       try {
         const res = await axios({
           method: 'post',
@@ -48,6 +49,7 @@ const runner = async () => {
           await newData.save();
         }
       } catch (error) {
+        debug(`error: ${error.message}, roomId: ${roomId}`)
         throw error;
       }
     } else {

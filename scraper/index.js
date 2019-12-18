@@ -37,7 +37,7 @@ app.post("/api/scraper", async (req, res) => {
     await page.close();
     return res.json(data);
   } catch (error) {
-    console.log(error.message)
+    console.log(`error: ${error.message}, url: ${url}`)
     return res.json({ error: { url, roomId, message: error.message } })
   }
 });
