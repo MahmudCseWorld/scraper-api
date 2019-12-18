@@ -12,7 +12,7 @@ services:
       - PORT=3000
     command: >
       sh -c "Xvfb :99 -screen 0 1024x768x16 &
-            yarn run start"
+      pm2-runtime index.js --watch"
     ports:
       - 3000:3000
   scraper-api-3001:

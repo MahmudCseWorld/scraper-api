@@ -16,3 +16,5 @@ COPY package.json package.json
 RUN  yarn 
 
 COPY . .
+
+RUN npm install pm2 -g
