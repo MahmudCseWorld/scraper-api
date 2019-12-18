@@ -26,12 +26,3 @@ services:
             yarn run start"
     ports:
       - 3001:3001
-    links:
-      - mongo
-  mongo:
-    container_name: mongo
-    image: mongo
-    volumes:
-      - ./persistance/mongo:/data
-    ports:
-      - 27017:27017
