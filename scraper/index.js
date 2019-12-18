@@ -32,6 +32,7 @@ app.post("/api/scraper", async (req, res) => {
       browser = await createBrowser();
     }
     const page = await browser.newPage();
+    console.log(`${roomId}`)
     const data = await scraper({ page, url, roomId, selector });
     await page.close();
     return res.json(data);

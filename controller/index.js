@@ -32,19 +32,23 @@ const runner = async () => {
 
     const alreadyScraped = await DataSchema.findOne({ roomId });
     if (!alreadyScraped) {
-      const res = await axios({
-        method: 'post',
-        url: api,
-        headers: { authorization: AUTHORIZATION },
-        data: { url, roomId, selector, proxies: proxyList }
-      });
-      if (res.data.error) {
-        debug(`Error found on: ${roomId}`)
-        const newError = new ErrorSchema({ ...res.data.error, site });
-        await newError.save();
-      } else {
-        const newData = new DataSchema({ ...res.data, site, roomId });
-        await newData.save();
+      try {
+        const res = await axios({
+          method: 'post',
+          url: api,
+          headers: { authorization: AUTHORIZATION },
+          data: { url, roomId, selector, proxies: proxyList }
+        });
+        if (res.data.error) {
+          debug(`Error found on: ${roomId}`)
+          const newError = new ErrorSchema({ ...res.data.error, site });
+          await newError.save();
+        } else {
+          const newData = new DataSchema({ ...res.data, site, roomId });
+          await newData.save();
+        }
+      } catch (error) {
+        throw error;
       }
     } else {
       debug(`Already scraped: ${roomId}`)
