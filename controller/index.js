@@ -38,6 +38,7 @@ const runner = async () => {
           method: 'post',
           url: api,
           headers: { authorization: AUTHORIZATION },
+          timeout: 60000,
           data: { url, roomId, selector, proxies: proxyList }
         });
         if (res.data.error) {
