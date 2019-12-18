@@ -27,21 +27,24 @@ app.post("/api/scraper", async (req, res) => {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
   const { url, roomId, selector } = req.body;
+  if (!browser) {
+    browser = await createBrowser();
+  }
+  const page = await browser.newPage();
   try {
-    if (!browser) {
-      browser = await createBrowser();
-    }
-    const page = await browser.newPage();
     console.log(`${roomId}`)
     const data = await scraper({ page, url, roomId, selector });
     await page.close();
     return res.json(data);
   } catch (error) {
     console.log(`error: ${error.message}, url: ${url}`)
+    await page.close();
     return res.json({ error: { url, roomId, message: error.message } })
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`server is running on port ${PORT}`);
+const port = PORT || 5000;
+
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`);
 });
