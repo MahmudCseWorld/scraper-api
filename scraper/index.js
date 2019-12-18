@@ -1,10 +1,12 @@
+require('dotenv').config({ path: './.env' });
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const runner = require("./controller/runner");
-const { MONGO_URL, AUTHORIZATION, PORT } = process.env;
-const DataSchema = require("./schema/data");
-const ErrorSchema = require("./schema/error");
+const scraper = require("./lib/scraper");
+const createBrowser = require('./lib/browser');
+
+const { AUTHORIZATION, PORTS } = process.env;
 
 const app = express();
 
@@ -13,20 +15,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 
-mongoose.connect(
-  MONGO_URL,
-  {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  },
-  err => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("DB is running");
-    }
-  }
-);
+app.use(async function (req, res, next) {
+  const page = await createBrowser();
+  req.page = page;
+  next();
+})
 
 app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization) {
@@ -37,30 +30,19 @@ app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization === AUTHORIZATION) {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
-  const { site, urls, start, end, proxies } = req.body;
-  runner({ site, urls, start, end, proxies });
-  return res.json({
-    success: true,
-    message: "Scraper started",
-  });
+  const { url, roomId, selector } = req.body;
+  try {
+    const data = await scraper({ page: req.page, url, roomId, selector });
+    return res.json(data);
+  } catch (error) {
+    return res.json({ error: { url, roomId, message: error.message } })
+  }
 });
 
-app.get("/api/scraper", (req, res) => res.json({ message: "Hello" }));
-app.get("/api/scraper/result", async (req, res) => {
-  const totalResult = await DataSchema.find({});
-  const puppeteer_errors = await ErrorSchema.find({});
-  return res.json({
-    total: {
-      count: totalResult.length,
-      // data: totalResult,
-    },
-    errors: {
-      count: puppeteer_errors.length,
-      // error: puppeteer_errors,
-    },
-  });
-});
+app.get('/', (req, res) => res.send('Hi'));
 
-app.listen(PORT, () => {
-  console.log(`server is running on port ${PORT}`);
+PORTS.split(',').map(port => {
+  app.listen(port, () => {
+    console.log(`server is running on port ${port}`);
+  });
 });

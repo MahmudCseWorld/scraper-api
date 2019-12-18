@@ -1,14 +1,14 @@
-const scraper = async ({ page, url, selectors }) => {
+const scraper = async ({ page, url, selector }) => {
   let result;
   try {
     await page.goto(url, { waitUntil: "networkidle2" });
-    result = await page.evaluate(selectors => {
-      const headline = document.querySelector(selectors.headline);
-      const total_review = document.querySelector(selectors.total_review);
+    result = await page.evaluate(selector => {
+      const headline = document.querySelector(selector.headline);
+      const total_review = document.querySelector(selector.total_review);
       const last_review_date = document.querySelector(
-        selectors.last_review_date
+        selector.last_review_date
       );
-      const description = document.querySelector(selectors.description);
+      const description = document.querySelector(selector.description);
 
       return {
         headline: headline.innerText,
@@ -16,7 +16,7 @@ const scraper = async ({ page, url, selectors }) => {
         last_review_date: last_review_date.innerText,
         description: description.innerText
       };
-    }, selectors);
+    }, selector);
   } catch (error) {
     throw error;
   }

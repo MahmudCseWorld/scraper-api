@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: './.env' });
 const axios = require('axios');
 const mongoose = require('mongoose');
 const debug = require('debug')('controller');
@@ -12,7 +12,9 @@ const selector = require("./selectors/airbnb.json");
 
 const argv = require('minimist')(process.argv);
 const { AUTHORIZATION, MONGO_URL } = process.env;
-const { start, end, api } = argv;
+const { start, end, api, proxies: proxiesDir } = argv;
+
+let proxyList;
 
 mongoose.connect(
   MONGO_URL,
@@ -28,6 +30,11 @@ mongoose.connect(
     }
   }
 );
+
+if (proxiesDir) {
+  const { proxies } = require(proxiesDir);
+  proxyList = proxies;
+}
 
 const runner = async () => {
   const site = 'airbnb';
@@ -45,7 +52,7 @@ const runner = async () => {
         method: 'post',
         url: api,
         headers: { authorization: AUTHORIZATION },
-        data: { url, roomId, selector }
+        data: { url, roomId, selector, proxies: proxyList }
       });
       if (res.data.error) {
         const newError = new ErrorSchema({ ...res.data.error, site });
@@ -56,8 +63,8 @@ const runner = async () => {
       }
     }
   }
-  debug('Url scraped');
+  debug('Complete!');
   return true;
 };
 
-runner();
+runner().then(() => mongoose.connection.close());
