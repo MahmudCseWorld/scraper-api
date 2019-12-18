@@ -16,6 +16,45 @@ const { start, end, api, proxies: proxiesDir } = argv;
 
 let proxyList;
 
+if (proxiesDir) {
+  const { proxies } = require(proxiesDir);
+  proxyList = proxies;
+}
+
+const runner = async () => {
+  const site = 'airbnb';
+  // Set index
+  const startIndex = start || 0;
+  const endIndex = end || urls.length;
+  for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
+    const roomId = url.split('/').slice(-1)[0];
+    debug(`${i + 1} out of ${endIndex - startIndex}: ${roomId}`);
+
+    const alreadyScraped = await DataSchema.findOne({ roomId });
+    if (!alreadyScraped) {
+      const res = await axios({
+        method: 'post',
+        url: api,
+        headers: { authorization: AUTHORIZATION },
+        data: { url, roomId, selector, proxies: proxyList }
+      });
+      if (res.data.error) {
+        debug(`Error found on: ${roomId}`)
+        const newError = new ErrorSchema({ ...res.data.error, site });
+        await newError.save();
+      } else {
+        const newData = new DataSchema({ ...res.data, site, roomId });
+        await newData.save();
+      }
+    } else {
+      debug(`Already scraped: ${roomId}`)
+    }
+  }
+  debug('Complete!');
+  return true;
+};
+
+
 mongoose.connect(
   MONGO_URL,
   {
@@ -27,43 +66,8 @@ mongoose.connect(
       debug(err);
     } else {
       debug('DB is running');
+      runner().then(() => mongoose.connection.close());
     }
   }
 );
 
-if (proxiesDir) {
-  const { proxies } = require(proxiesDir);
-  proxyList = proxies;
-}
-
-const runner = async () => {
-  const site = 'airbnb';
-  // Set index
-  const startIndex = start - 1 || 0;
-  const endIndex = end || urls.length;
-  for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
-    const roomId = url.split('/').slice(-1)[0];
-    debug(`${i + 1} out of ${endIndex}: ${roomId}`);
-
-    const alreadyScraped = await DataSchema.findOne({ roomId });
-    if (!alreadyScraped) {
-      const res = await axios({
-        method: 'post',
-        url: api,
-        headers: { authorization: AUTHORIZATION },
-        data: { url, roomId, selector, proxies: proxyList }
-      });
-      if (res.data.error) {
-        const newError = new ErrorSchema({ ...res.data.error, site });
-        await newError.save();
-      } else {
-        const newData = new DataSchema({ ...res.data, site });
-        await newData.save();
-      }
-    }
-  }
-  debug('Complete!');
-  return true;
-};
-
-runner().then(() => mongoose.connection.close());
