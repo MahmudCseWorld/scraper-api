@@ -1,3 +1,18 @@
+# Run the scraper api
+
+- CD into scraper
+- Run `yarn start`
+- To run in docker
+  ```bash
+  $ ENV_FILE=.env docker-compose -f docker-compose.yml up --build
+  ```
+
+## ENV variables
+
+```bash
+AUTHORIZATION=YOUR AUTHORIZATION SECRET
+```
+
 # Run the controller
 
 - CD into `controller`
@@ -49,19 +64,4 @@ To Add proxies create a new json file `proxies.json` and put your proxies in thi
 ```bash
 AUTHORIZATION=YOUR AUTHORIZATION SECRET
 MONGO_URL=YOUR MONGODB URL
-```
-
-# Run the scraper
-
-- CD into scraper
-- Run `yarn start`
-- To run in docker
-  ```bash
-  $ ENV_FILE=.env docker-compose -f docker-compose.yml up --build
-  ```
-
-## ENV variables
-
-```bash
-AUTHORIZATION=YOUR AUTHORIZATION SECRET
 ```
