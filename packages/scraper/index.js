@@ -39,14 +39,10 @@ app.post("/api/scraper", async (req, res) => {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
   const { site, urls, start, end, proxies } = req.body;
-  await runner({ site, urls, start, end, proxies });
-  const totalResult = await DataSchema.find({});
-  const puppeteer_errors = await ErrorSchema.find({});
+  runner({ site, urls, start, end, proxies });
   return res.json({
     success: true,
-    message: "Urls are scraped",
-    total: totalResult.length,
-    puppeteer_errors: puppeteer_errors.length
+    message: "Scraper started",
   });
 });
 
@@ -61,7 +57,7 @@ app.get("/api/scraper/result", async (req, res) => {
     },
     errors: {
       count: puppeteer_errors.length,
-      error: puppeteer_errors,
+      // error: puppeteer_errors,
     },
   });
 });
