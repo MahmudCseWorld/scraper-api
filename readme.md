@@ -1,23 +1,67 @@
-# Development
-```
-$ npm i -g dotenv-cli
-$ yarn or npm install
-$ dotenv -e .env yarn start:scraper
-```
-## Run scraper in docker
-```
-$ ENV_FILE=.env docker-compose -f docker-compose.yml up --build
+# Run the controller
+
+- CD into `controller`
+- Put your `aribnb` links in a JSON file and rename it `urls.json`.
+
+  Example:
+
+  ```js
+  {
+    "urls": [
+      "https://www.airbnb.com/rooms/7942637",
+      "https://www.airbnb.com/rooms/30258897",
+      ....
+    ]
+  }
+  ```
+
+- Run `cli` command to start the controller
+
+```bash
+$ DEBUG=controller yarn start --proxies=./proxies.json --start=1 --end=20 --api=http://localhost:3000/api/scraper
 ```
 
-# Run controller 
- ```bash
- $ dotenv -e .env yarn start:controller
- ```
+## CLI options
 
-# Setting Environment Variables
+| Arguments | Description                                           | Type   |
+| --------- | ----------------------------------------------------- | ------ |
+| urls      | A JSON file with a list of links                      | JSON   |
+| proxies   | A JSON file with a list of proxies                    | JSON   |
+| start     | Starting number from where you want to start scraping | Number |
+| end       | End number on where you to stop scraping              | Number |
+| api       | API endpoint                                          | String |
+
+## Add proxy
+
+To Add proxies create a new json file `proxies.json` and put your proxies in this format
+
+```json
+{
+  "proxies": [
+    { "address": "x.x.x.x", "port": y, "username": "z", "password": "z" },
+    { "address": "x.x.x.x", "port": y, "username": "z", "password": "z" }
+  ]
+}
 ```
-AUTHORIZATION=
-MONGO_URL=
-PORT=
-API_URL=
+
+## ENV variables
+
+```bash
+AUTHORIZATION=YOUR AUTHORIZATION SECRET
+MONGO_URL=YOUR MONGODB URL
+```
+
+# Run the scraper
+
+- CD into scraper
+- Run `yarn start`
+- To run in docker
+  ```bash
+  $ ENV_FILE=.env docker-compose -f docker-compose.yml up --build
+  ```
+
+## ENV variables
+
+```bash
+AUTHORIZATION=YOUR AUTHORIZATION SECRET
 ```

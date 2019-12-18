@@ -4,16 +4,28 @@ services:
     image: base
     env_file: ${ENV_FILE}
     build: .
-  scraper-api:
+  scraper-api-3000:
     image: base
     env_file: ${ENV_FILE}
     environment:
       - DISPLAY=:99
+      - PORT=3000
     command: >
       sh -c "Xvfb :99 -screen 0 1024x768x16 &
-            yarn run start:scraper"
+            yarn run start"
     ports:
-      - 5000:5000
+      - 3000:3000
+  scraper-api-3001:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:100
+      - PORT=3001
+    command: >
+      sh -c "Xvfb :100 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3001:3001
     links:
       - mongo
   mongo:

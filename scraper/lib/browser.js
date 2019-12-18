@@ -15,8 +15,7 @@ const createBrowser = async (proxies) => {
     headless: false,
     args
   });
-  const page = await browser.newPage();
-  return page;
+  return browser;
 }
 
 module.exports = createBrowser;

@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const scraper = require("./lib/scraper");
 const createBrowser = require('./lib/browser');
 
-const { AUTHORIZATION, PORTS } = process.env;
+const { AUTHORIZATION, PORT } = process.env;
 
 const app = express();
 
@@ -15,11 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 
-app.use(async function (req, res, next) {
-  const page = await createBrowser();
-  req.page = page;
-  next();
-})
+let browser;
 
 app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization) {
@@ -32,17 +28,19 @@ app.post("/api/scraper", async (req, res) => {
   }
   const { url, roomId, selector } = req.body;
   try {
-    const data = await scraper({ page: req.page, url, roomId, selector });
+    if (!browser) {
+      browser = await createBrowser();
+    }
+    const page = await browser.newPage();
+    const data = await scraper({ page, url, roomId, selector });
+    await page.close();
     return res.json(data);
   } catch (error) {
+    console.log(error.message)
     return res.json({ error: { url, roomId, message: error.message } })
   }
 });
 
-app.get('/', (req, res) => res.send('Hi'));
-
-PORTS.split(',').map(port => {
-  app.listen(port, () => {
-    console.log(`server is running on port ${port}`);
-  });
+app.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
 });
