@@ -11,9 +11,8 @@ libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss
 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget \
 xvfb x11vnc x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps
 
-COPY  ./packages/scraper/package.json ./packages/scraper/package.json
+
 COPY package.json package.json
-COPY lerna.json lerna.json
 RUN  yarn 
 
 COPY . .
