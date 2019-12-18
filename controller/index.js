@@ -1,50 +1,63 @@
-require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({ path: '../.env' });
 const axios = require('axios');
 const mongoose = require('mongoose');
+const debug = require('debug')('controller');
 
 const DataSchema = require("./schema/data");
 const ErrorSchema = require("./schema/error");
-const argv = require('minimist')(process.argv);
-const { API_URL, AUTHORIZATION } = process.env;
-const { start, end } = argv;
 
+const { urls } = require('./urls.json');
+const selector = require("./selectors/airbnb.json");
+
+
+const argv = require('minimist')(process.argv);
+const { AUTHORIZATION, MONGO_URL } = process.env;
+const { start, end, api } = argv;
 
 mongoose.connect(
-	MONGO_URL,
-	{
-		useUnifiedTopology: true,
-		useNewUrlParser: true
-	},
-	(err) => {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log('DB is running');
-		}
-	}
+  MONGO_URL,
+  {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+  },
+  (err) => {
+    if (err) {
+      debug(err);
+    } else {
+      debug('DB is running');
+    }
+  }
 );
 
 const runner = async () => {
-	const { urls } = require('./urls.json');
-	const { proxies } = require('./proxies.json');
+  const site = 'airbnb';
+  // Set index
+  const startIndex = start - 1 || 0;
+  const endIndex = end || urls.length;
 
-	for (const [ i, url ] of urls.entries()) {
-		const roomId = url.split('/').slice(-1)[0];
-		console.log(`${i + 1} out of ${urls.length}: ${roomId}`);
+  for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
+    const roomId = url.split('/').slice(-1)[0];
+    debug(`${i + 1} out of ${urls.length}: ${roomId}`);
 
-		const alreadyScraped = await DataSchema.findOne({ roomId });
-		if (!alreadyScraped) {
-			const res = await axios({
-				method: 'post',
-				url: API_URL,
-				headers: { authorization: AUTHORIZATION },
-				data: {  url,  proxies }
+    const alreadyScraped = await DataSchema.findOne({ roomId });
+    if (!alreadyScraped) {
+      const res = await axios({
+        method: 'post',
+        url: api,
+        headers: { authorization: AUTHORIZATION },
+        data: { url, roomId, selector }
       });
-      const newData = new DataSchema(res.data);
-		} else {
-			console.log(`${roomId} is already scraped`);
-		}
-	}
+      if (res.data.error) {
+        const newError = new ErrorSchema({ ...res.data.error, site });
+        await newError.save();
+      } else {
+        const newData = new DataSchema({ ...res.data, site });
+        await newData.save();
+      }
+    }
+  }
+  debug('Url scraped');
+  return true;
 };
 
-runner().then(console.log);
+runner();

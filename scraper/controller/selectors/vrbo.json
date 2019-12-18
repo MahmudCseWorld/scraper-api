@@ -1,6 +1,0 @@
-{
-  "headline": "[data-wdio='property-headline'] h1",
-  "total_review": ".reviews-summary__num-reviews",
-  "last_review_date": ".review-list__review-wrapper.first .review__stayed-details",
-  "description": ".collapsible-content__body-text"
-}
