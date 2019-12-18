@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
 const browserPagePool = require('./browserPagePool');
 const scraper = require('../lib/scraper');
-const DataSchema = require('../schema/data');
-const ErrorSchema = require('../schema/error');
+const DataSchema = require('../../controller/schema/data');
+const ErrorSchema = require('../../controller/schema/error');
 
 const runner = async ({ site, urls, start, end, proxies }) => {
 	let result;
@@ -17,19 +16,12 @@ const runner = async ({ site, urls, start, end, proxies }) => {
 		const roomId = url.split('/').slice(-1)[0];
 		console.log(`${i + 1} out of ${urls.length}: ${roomId}`);
 		try {
-			const alreadyScraped = await DataSchema.findOne({ roomId });
-			if (!alreadyScraped) {
 				const data = await scraper({
 					site,
 					page,
 					url,
 					selectors
 				});
-				const newData = new DataSchema({ ...data, site, roomId, url });
-				result = await newData.save();
-			} else {
-				console.log(`${roomId} is already scraped`);
-			}
 		} catch (error) {
 			const newError = new ErrorSchema({
 				site,
@@ -37,7 +29,6 @@ const runner = async ({ site, urls, start, end, proxies }) => {
 				url,
 				message: error.message
 			});
-			await newError.save();
 			console.log(`Error found on id: ${roomId}`);
 		}
 	}
