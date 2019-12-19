@@ -39,7 +39,7 @@ const runner = async () => {
           method: 'post',
           url: api,
           headers: { authorization: AUTHORIZATION },
-          timeout: 60000,
+          timeout: 2 * 60000,
           data: { url, roomId, selector, proxies: proxyList }
         });
         debug('After')
@@ -53,7 +53,6 @@ const runner = async () => {
         }
       } catch (error) {
         debug(`error: ${error.message}, roomId: ${roomId}`)
-        throw error;
       }
     } else {
       debug(`Already scraped: ${roomId}`)
