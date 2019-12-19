@@ -36,6 +36,12 @@ AUTHORIZATION=YOUR AUTHORIZATION SECRET
 $ DEBUG=controller yarn start --proxies=./proxies.json --start=1 --end=20 --api=http://localhost:3000/api/scraper
 ```
 
+- Make CSV from Database records
+
+```bash
+$ DEBUG=make-csv node make-csv.js
+```
+
 ## CLI options
 
 | Arguments | Description                                           | Type   |
