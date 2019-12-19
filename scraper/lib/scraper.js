@@ -3,16 +3,16 @@ const scraper = async ({ page, url, roomId, selector }) => {
   console.log(`scraper: ${roomId}`);
   let result;
   try {
-    // // Block images to speeup pages
-    // await page.setRequestInterception(true);
-    // page.on('request', (req) => {
-    //   if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-    //     req.abort();
-    //   }
-    //   else {
-    //     req.continue();
-    //   }
-    // });
+    // Block images to speeup pages
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+        req.abort();
+      }
+      else {
+        req.continue();
+      }
+    });
     console.log(`Navigating`)
     await page.goto(url, { waitUntil: "networkidle2" });
     console.log(`Extracting`);
