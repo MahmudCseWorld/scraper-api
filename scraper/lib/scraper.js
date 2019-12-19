@@ -1,6 +1,16 @@
 const scraper = async ({ page, url, selector }) => {
   let result;
   try {
+    // Block images to speeup pages
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+        req.abort();
+      }
+      else {
+        req.continue();
+      }
+    });
     await page.goto(url, { waitUntil: "networkidle2" });
     result = await page.evaluate(selector => {
       const headline = document.querySelector(selector.headline);

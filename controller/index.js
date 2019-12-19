@@ -34,6 +34,7 @@ const runner = async () => {
     const existOnError = await ErrorSchema.findOne({ roomId });
     if (!alreadyScraped && !existOnError) {
       try {
+        debug('Before')
         const res = await axios({
           method: 'post',
           url: api,
@@ -41,6 +42,7 @@ const runner = async () => {
           timeout: 60000,
           data: { url, roomId, selector, proxies: proxyList }
         });
+        debug('After')
         if (res.data.error) {
           debug(`Error found on: ${roomId}`)
           const newError = new ErrorSchema({ ...res.data.error, site });
