@@ -4,25 +4,14 @@ services:
     image: base
     env_file: ${ENV_FILE}
     build: .
-  scraper-api-3000:
-    image: base
-    env_file: ${ENV_FILE}
-    environment:
-      - DISPLAY=:99
-      - PORT=3000
-    command: >
-      sh -c "Xvfb :99 -screen 0 1024x768x16 &
-            yarn run start"
-    ports:
-      - 3000:3000
   scraper-api-3001:
     image: base
     env_file: ${ENV_FILE}
     environment:
-      - DISPLAY=:100
+      - DISPLAY=:101
       - PORT=3001
     command: >
-      sh -c "Xvfb :100 -screen 0 1024x768x16 &
+      sh -c "Xvfb :101 -screen 0 1024x768x16 &
             yarn run start"
     ports:
       - 3001:3001
@@ -30,10 +19,10 @@ services:
     image: base
     env_file: ${ENV_FILE}
     environment:
-      - DISPLAY=:101
+      - DISPLAY=:102
       - PORT=3002
     command: >
-      sh -c "Xvfb :101 -screen 0 1024x768x16 &
+      sh -c "Xvfb :102 -screen 0 1024x768x16 &
             yarn run start"
     ports:
       - 3002:3002
@@ -41,10 +30,32 @@ services:
     image: base
     env_file: ${ENV_FILE}
     environment:
-      - DISPLAY=:102
+      - DISPLAY=:103
       - PORT=3003
     command: >
-      sh -c "Xvfb :102 -screen 0 1024x768x16 &
+      sh -c "Xvfb :103 -screen 0 1024x768x16 &
             yarn run start"
     ports:
       - 3003:3003
+  scraper-api-3004:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:104
+      - PORT=3004
+    command: >
+      sh -c "Xvfb :104 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3004:3004
+  scraper-api-3005:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:105
+      - PORT=3005
+    command: >
+      sh -c "Xvfb :105 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3005:3005

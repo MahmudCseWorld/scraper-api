@@ -29,7 +29,7 @@ const runner = async () => {
   for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
     const roomId = url.split('/').slice(-1)[0];
     debug(`${i + 1} out of ${endIndex - startIndex}: ${roomId}`);
-
+    
     const alreadyScraped = await DataSchema.findOne({ roomId });
     const existOnError = await ErrorSchema.findOne({ roomId });
     if (!alreadyScraped && !existOnError) {
