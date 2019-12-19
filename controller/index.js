@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 const axios = require('axios');
 const mongoose = require('mongoose');
 const debug = require('debug')('controller');
@@ -46,7 +46,7 @@ const runner = async () => {
           const newError = new ErrorSchema({ ...res.data.error, site });
           await newError.save();
         } else {
-          const newData = new DataSchema({ ...res.data, site, roomId });
+          const newData = new DataSchema({ ...res.data, site, roomId, url });
           await newData.save();
         }
       } catch (error) {
