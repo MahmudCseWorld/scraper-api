@@ -1,4 +1,6 @@
-const scraper = async ({ page, url, selector }) => {
+
+const scraper = async ({ page, url, roomId, selector }) => {
+  const debug = require('debug')(`scraper: ${roomId}`);
   let result;
   try {
     // // Block images to speeup pages
@@ -11,7 +13,9 @@ const scraper = async ({ page, url, selector }) => {
     //     req.continue();
     //   }
     // });
+    debug(`Navigating`)
     await page.goto(url, { waitUntil: "networkidle2" });
+    debug(`Extracting`);
     result = await page.evaluate(selector => {
       const headline = document.querySelector(selector.headline);
       const total_review = document.querySelector(selector.total_review);
