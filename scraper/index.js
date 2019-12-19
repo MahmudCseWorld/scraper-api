@@ -1,35 +1,50 @@
+require('dotenv').config({ path: './.env' });
 
 const express = require("express");
-const cors = require("cors");
-const scraper = require("./scraper");
-const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
-const Data = require("./schema/data");
+const scraper = require("./lib/scraper");
+const createBrowser = require('./lib/browser');
+
+const { AUTHORIZATION, PORT } = process.env;
 
 const app = express();
-app.use(cors());
-mongoose.connect(
-  "mongodb://mongo:27017/scraper_api",
-  {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  },
-  err => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("DB is running");
-    }
-  }
-);
 
-app.get("/api/scraper", async (req, res) => {
-  const data = await scraper();
-  const result = new Data(data);
-  const response = await result.save();
-  return res.json(response);
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
+
+let browser;
+
+app.post("/api/scraper", async (req, res) => {
+  if (!req.headers.authorization) {
+    return res
+      .status(403)
+      .json({ message: "No authorization header provided" });
+  }
+  if (!req.headers.authorization === AUTHORIZATION) {
+    return res.status(403).json({ message: "Invalid Authorization" });
+  }
+  const { url, roomId, selector } = req.body;
+  if (!browser) {
+    browser = await createBrowser();
+  }
+  const page = await browser.newPage();
+  try {
+    console.log(`${roomId}`)
+    const data = await scraper({ page, url, roomId, selector });
+    await page.close();
+    return res.json(data);
+  } catch (error) {
+    console.log(`error: ${error.message}, url: ${url}`)
+    await page.close();
+    return res.json({ error: { url, roomId, message: error.message } })
+  }
 });
 
-app.listen(5000, () => {
-  console.log("server is running on port 5000");
+const port = PORT || 5000;
+
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`);
 });
