@@ -27,17 +27,17 @@ app.post("/api/scraper", async (req, res) => {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
   const { url, roomId, selector } = req.body;
-  const debug = require('debug')(`scraper: ${roomId}`);
+  console.log(`scraper: ${roomId}`);
   if (!browser) {
-    debug('Creating browser');
+    console.log('Creating browser');
     browser = await createBrowser();
   }
-  debug('Creating new page');
+  console.log('Creating new page');
   const page = await browser.newPage();
   try {
     const data = await scraper({ page, url, roomId, selector });
     await page.close();
-    debug('Closing page')
+    console.log('Closing page')
     return res.json(data);
   } catch (error) {
     console.log(`error: ${error.message}, url: ${url}`)
