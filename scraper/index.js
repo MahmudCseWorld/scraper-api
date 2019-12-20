@@ -26,11 +26,11 @@ app.post("/api/scraper", async (req, res) => {
   if (!req.headers.authorization === AUTHORIZATION) {
     return res.status(403).json({ message: "Invalid Authorization" });
   }
-  const { url, roomId, selector } = req.body;
+  const { url, roomId, selector, proxies } = req.body;
   console.log(`scraper: ${roomId}`);
   if (!browser) {
     console.log('Creating browser');
-    browser = await createBrowser();
+    browser = await createBrowser(proxies);
   }
   console.log('Creating new page');
   const page = await browser.newPage();
