@@ -59,3 +59,58 @@ services:
             yarn run start"
     ports:
       - 3005:3005
+  scraper-api-3006:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:106
+      - PORT=3006
+    command: >
+      sh -c "Xvfb :106 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3006:3006
+  scraper-api-3007:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:107
+      - PORT=3007
+    command: >
+      sh -c "Xvfb :107 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3007:3007
+  scraper-api-3008:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:108
+      - PORT=3008
+    command: >
+      sh -c "Xvfb :108 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3008:3008
+  scraper-api-3009:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:109
+      - PORT=3009
+    command: >
+      sh -c "Xvfb :109 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3009:3009
+  scraper-api-3010:
+    image: base
+    env_file: ${ENV_FILE}
+    environment:
+      - DISPLAY=:110
+      - PORT=3010
+    command: >
+      sh -c "Xvfb :110 -screen 0 1024x768x16 &
+            yarn run start"
+    ports:
+      - 3010:3010
