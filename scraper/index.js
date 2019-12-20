@@ -40,7 +40,7 @@ app.post("/api/scraper", async (req, res) => {
     console.log('Closing page')
     return res.json(data);
   } catch (error) {
-    console.log(`error: ${error.message}, url: ${url}`)
+    console.log(`error: ${error.message}, url: ${url}, page_title: ${await page.title()}`)
     await page.close();
     return res.json({ error: { url, roomId, message: error.message } })
   }
