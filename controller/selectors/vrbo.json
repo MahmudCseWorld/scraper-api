@@ -1,0 +1,6 @@
+{
+  "headline": ".property-headline__headline",
+  "total_review": ".reviews-summary__num-reviews",
+  "last_review_date": ".review__stayed-details",
+  "description": ".collapsible-content__body-text"
+}
