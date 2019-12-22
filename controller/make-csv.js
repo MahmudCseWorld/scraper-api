@@ -19,15 +19,28 @@ const fields = {
 
 const writeCsv = async (data) => {
   const csv = parse(data, { fields: Object.keys(fields).map(f => fields[f]) });
-  return fs.writeFile(`${__dirname}/data/firms.csv`, csv, err => err && debug(err));
+  return fs.writeFile(`${__dirname}/data/airbnb.csv`, csv, err => err && debug(err));
 };
 
+const removeDuplicates = (originalArray, prop) => {
+  var newArray = [];
+  var lookupObject = {};
+
+  for (var i in originalArray) {
+    lookupObject[originalArray[i][prop]] = originalArray[i];
+  }
+
+  for (i in lookupObject) {
+    newArray.push(lookupObject[i]);
+  }
+  return newArray;
+}
+
 const formatData = async () => {
-  const opts = { fields };
   let dataForCSV = [];
   try {
     const data = await DataSchema.find({});
-    dataForCSV = data.map(r => ({ [fields.url]: r.url, [fields.headline]: r.headline, [fields.total_review]: r.total_review, [fields.last_review_date]: r.last_review_date, [fields.description]: r.description }))
+    dataForCSV = removeDuplicates(data, 'roomId').map(r => ({ [fields.url]: r.url, [fields.headline]: r.headline, [fields.total_review]: r.total_review, [fields.last_review_date]: r.last_review_date, [fields.description]: r.description }))
   } catch (err) {
     debug(err);
   }
