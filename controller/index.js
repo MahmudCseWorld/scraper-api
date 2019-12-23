@@ -6,8 +6,8 @@ const debug = require('debug')('controller');
 const DataSchema = require("./schema/data");
 const ErrorSchema = require("./schema/error");
 
-const { urls } = require('./urls.json');
-const selector = require("./selectors/airbnb.json");
+const { urls } = require('./data/vrbo.json');
+const selector = require("./selectors/vrbo.json");
 
 
 const argv = require('minimist')(process.argv);
@@ -22,7 +22,7 @@ if (proxiesDir) {
 }
 
 const runner = async () => {
-  const site = 'airbnb';
+  const site = 'vrbo';
   // Set index
   const startIndex = start || 0;
   const endIndex = end || urls.length;
