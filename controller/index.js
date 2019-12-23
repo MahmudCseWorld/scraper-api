@@ -1,48 +1,51 @@
-require('dotenv').config();
 const axios = require('axios');
 const mongoose = require('mongoose');
 const debug = require('debug')('controller');
 
+const { auth, db, scraper: { urlsDir, proxiesDir, site, start, end, api } } = require('./config');
 const DataSchema = require("./schema/data");
 const ErrorSchema = require("./schema/error");
 
-const { urls } = require('./data/vrbo.json');
-const selector = require("./selectors/vrbo.json");
-
-
-const argv = require('minimist')(process.argv);
-const { AUTHORIZATION, MONGO_URL } = process.env;
-const { start, end, api, proxies: proxiesDir } = argv;
-
 let proxyList;
+
+if (!site) {
+  throw new Error('No site name provided!')
+}
+
+if (!urlsDir) {
+  throw new Error('No urls directory provided!')
+}
 
 if (proxiesDir) {
   const { proxies } = require(proxiesDir);
   proxyList = proxies;
 }
 
+
+
 const runner = async () => {
-  const site = 'vrbo';
+  const { urls } = require(urlsDir);
+  const selector = require(`./selectors/${site}.json`);
   // Set index
   const startIndex = start || 0;
   const endIndex = end || urls.length;
   for (const [i, url] of urls.slice(startIndex, endIndex).entries()) {
+    // Unique id for single url
     const roomId = url.split('/').slice(-1)[0];
-    debug(`${i + 1} out of ${endIndex - startIndex}: ${roomId}`);
-    
+    debug(`${i + 1} out of ${endIndex - startIndex}`);
+    // Make sure to skip already skipped and errors
     const alreadyScraped = await DataSchema.findOne({ roomId });
     const existOnError = await ErrorSchema.findOne({ roomId });
     if (!alreadyScraped && !existOnError) {
       try {
-        debug('Before')
         const res = await axios({
           method: 'post',
           url: api,
-          headers: { authorization: AUTHORIZATION },
+          headers: { authorization: auth.token },
           timeout: 2 * 60000,
           data: { url, roomId, selector, proxies: proxyList }
         });
-        debug('After')
+        debug(`Complete scraping ${roomId}`);
         if (res.data.error) {
           debug(`Error found on: ${roomId}`)
           const newError = new ErrorSchema({ ...res.data.error, site });
@@ -58,13 +61,12 @@ const runner = async () => {
       debug(`Already scraped: ${roomId}`)
     }
   }
-  debug('Complete!');
   return true;
 };
 
 
 mongoose.connect(
-  MONGO_URL,
+  db.url,
   {
     useUnifiedTopology: true,
     useNewUrlParser: true
