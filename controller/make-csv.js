@@ -1,13 +1,15 @@
-require('dotenv').config();
-
 const mongoose = require('mongoose');
 const { parse } = require('json2csv');
 const debug = require('debug')('make-csv');
 const fs = require('fs');
 
-const DataSchema = require("./schema/data");
 
-const { MONGO_URL } = process.env;
+const DataSchema = require("./schema/data");
+const { db, scraper: { site } } = require('./config');
+
+if (!site) {
+  throw new Error('No site name provided!')
+}
 
 const fields = {
   url: "Listing URL",
@@ -19,7 +21,7 @@ const fields = {
 
 const writeCsv = async (data) => {
   const csv = parse(data, { fields: Object.keys(fields).map(f => fields[f]) });
-  return fs.writeFile(`${__dirname}/data/airbnb.csv`, csv, err => err && debug(err));
+  return fs.writeFile(`${__dirname}/output/${site}.csv`, csv, err => err && debug(err));
 };
 
 const removeDuplicates = (originalArray, prop) => {
@@ -48,7 +50,7 @@ const formatData = async () => {
 }
 
 mongoose.connect(
-  MONGO_URL,
+  db.url,
   {
     useUnifiedTopology: true,
     useNewUrlParser: true
